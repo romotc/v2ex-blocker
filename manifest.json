@@ -1,6 +1,7 @@
 {
     "name" : "V2EX Blocker",
     "description" : "Block everything you don't like on V2EX",
+    "version" : "0.0.1",
     "manifest_version" : 2,
 
     "permissions" : [
