@@ -37,12 +37,12 @@
         localStorage["userInfo"] = JSON.stringify(this._cache);
     };
 
-    function getUIDFromReply(reply, callback) {
+    function getUIDFromElement(element, callback) {
         // try to get uid from avatar src
-        var avatar_src = $('.avatar', reply).attr('src'), 
+        var avatar_src = $('.avatar', element).attr('src'), 
             match_result = AVATAR_UID_REGEX.exec(avatar_src), 
-            reply_user = $('strong a[href^="/member/"]', reply), 
-            username = reply_user.text().trim();
+            reply_user = $('strong a[href^="/member/"]', element), 
+            username = reply_user[0].innerText.trim();
         if(match_result) {
             return callback(parseInt(match_result[1], 10));
         }
@@ -50,25 +50,42 @@
         cache.getUserIDFromUsername(username, callback);
     }
 
-    function cleanReplyList() {
-        var replies = $('div[id^="r_"]');
-        
-        replies.each(function(_, reply) {
-            getUIDFromReply(reply, function(uid) {
-                if(uid >= 10000) {
-                    hideReply(reply);
-                }
+    function cleanList(list) {
+        list.each(function(_, element) {
+            getUIDFromElement(element, function(uid) {
+                handleUID(uid, element);
             });
         });
     }
 
-    function hideReply(reply) {
-        $(reply).hide();
+    function handleUID(uid, element) {
+        if(uid >= 10000) {
+            hideElement(element);
+        }
+    }
+
+    function cleanReplyList() {
+        cleanList($('div[id^="r_"]'));
+        // TODO: change the class of last reply from `cell` to `inner` for removing border-bottom
+    }
+
+    function cleanTopicList() {
+        cleanList($('#Main > .box > .cell.item'));
+    }
+
+    function cleanTopHot() {
+    }
+
+    function hideElement(element) {
+        $(element).remove();
     }
     
     function startCleanPage() {
         cache = new UserCache();
+
         cleanReplyList();
+        cleanTopicList();
+        cleanTopHot();
     }
 
     startCleanPage();
