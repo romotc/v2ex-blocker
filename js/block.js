@@ -1,6 +1,7 @@
 (function() {
-    var AVATAR_UID_REGEX = /^http:\/\/cdn\.v2ex\.com\/avatar\/[a-zA-z0-9]{4}\/[a-zA-z0-9]{4}\/(\d+)_large\.png\?m\=(\d*)$/;
-    var cache;
+    var AVATAR_UID_REGEX = /^http:\/\/cdn\.v2ex\.com\/avatar\/[a-zA-z0-9]{4}\/[a-zA-z0-9]{4}\/(\d+)_large\.png\?m\=(\d*)$/, 
+        HOT_TOPIC_UID_REGEX = /cell from_(\d+) hot_t_(.*)/, 
+        cache;
 
     var UserCache = function () {
         this._cache = localStorage['userInfo'];
@@ -74,6 +75,15 @@
     }
 
     function cleanTopHot() {
+        var hot_topics = $('#TopicsHot .cell[class*="from_"]');
+
+        hot_topics.each(function(_, topic) {
+            var regex_result = HOT_TOPIC_UID_REGEX.exec(topic.className);
+
+            if(regex_result) {
+                return handleUID(parseInt(regex_result[1], 10), topic);
+            }
+        });
     }
 
     function hideElement(element) {
